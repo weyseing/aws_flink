@@ -1,2 +1,2 @@
-connectors/jars/
-dummy/target/
+flink_libs/jars/
+flink_app_example/target/
