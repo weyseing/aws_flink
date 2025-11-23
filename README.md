@@ -1,2 +1,13 @@
-# aws_flink
-AWS Managed Apache Flink
+# Setup Guide
+- S3 Bucket
+- Glue Database
+- IAM role (s3, glue full access)
+- pom.xml
+- apt install maven
+- Maven download jars file (mvn dependency:copy-dependencies -DoutputDirectory=./jars)
+- upload jars file to s3
+- AWS Flink > configure > runtime properties
+    - pipeline.classpaths
+    - s3://poc-iceberg-107698500998/jars/flink-connector-kafka-3.3.0-1.20.jar;s3://poc-iceberg-107698500998/jars/flink-sql-connector-kafka-3.3.0-1.20.jar;s3://poc-iceberg-107698500998/jars/flink-json-1.20.0.jar;s3://poc-iceberg-107698500998/jars/iceberg-flink-runtime-1.20-1.8.0.jar;s3://poc-iceberg-107698500998/jars/iceberg-aws-bundle-1.8.0.jar
+- run flink app
+- flink dashboard
