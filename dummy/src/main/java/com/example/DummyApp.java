@@ -5,6 +5,9 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 public class DummyApp {
     public static void main(String[] args) throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        env.execute("Dummy Flink SQL Application – does nothing");
+        env.fromSequence(1, Long.MAX_VALUE)
+           .map(value -> value)
+           .print();                     // keeps job alive forever
+        env.execute("Alive");
     }
 }
