@@ -1,10 +1,15 @@
 # Setup Guide
 - S3 Bucket
 - Glue Database
-- IAM role (s3, glue full access)
-- pom.xml
+- IAM role (s3, glue, cloudwatch logs)
 - apt install maven
-- Maven download jars file (mvn dependency:copy-dependencies -DoutputDirectory=./jars)
+- dummy app
+    - dummyapp.java
+    - pom.xml
+    - mvn clean package -q
+jars
+    - pom.xml
+    - rm -rf jars && mvn dependency:copy-dependencies -DoutputDirectory=jars
 - upload jars file to s3
 - AWS Flink > configure > runtime properties
     - pipeline.classpaths
