@@ -8,60 +8,51 @@
     <version>1.0</version>
 
     <properties>
-        <flink.version>1.20.0</flink.version>
-        <iceberg.version>1.8.0</iceberg.version>
-        <kafka.connector.version>3.3.0-1.20</kafka.connector.version>
+        <flink.version>1.15.4</flink.version>
+        <iceberg.version>1.4.3</iceberg.version>
     </properties>
 
     <dependencies>
-        <!-- 1. Kafka core connector -->
-        <dependency>
-            <groupId>org.apache.flink</groupId>
-            <artifactId>flink-connector-kafka</artifactId>
-            <version>${kafka.connector.version}</version>
-            <exclusions>
-                <exclusion><groupId>*</groupId><artifactId>*</artifactId></exclusion>
-            </exclusions>
-        </dependency>
-
-        <!-- 2. Kafka SQL connector -->
         <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-sql-connector-kafka</artifactId>
-            <version>${kafka.connector.version}</version>
-            <exclusions>
-                <exclusion><groupId>*</groupId><artifactId>*</artifactId></exclusion>
-            </exclusions>
+            <version>${flink.version}</version>
         </dependency>
 
-        <!-- 3. JSON + Debezium format support -->
         <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-json</artifactId>
             <version>${flink.version}</version>
-            <exclusions>
-                <exclusion><groupId>*</groupId><artifactId>*</artifactId></exclusion>
-            </exclusions>
         </dependency>
 
-        <!-- 4. Iceberg Flink runtime -->
         <dependency>
             <groupId>org.apache.iceberg</groupId>
-            <artifactId>iceberg-flink-runtime-1.20</artifactId>
+            <artifactId>iceberg-flink-runtime-1.15</artifactId>
             <version>${iceberg.version}</version>
-            <exclusions>
-                <exclusion><groupId>*</groupId><artifactId>*</artifactId></exclusion>
-            </exclusions>
         </dependency>
 
-        <!-- 5. Iceberg AWS bundle (contains hadoop-aws, aws-sdk, etc.) -->
         <dependency>
             <groupId>org.apache.iceberg</groupId>
             <artifactId>iceberg-aws-bundle</artifactId>
             <version>${iceberg.version}</version>
-            <exclusions>
-                <exclusion><groupId>*</groupId><artifactId>*</artifactId></exclusion>
-            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-common</artifactId>
+            <version>2.8.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-hdfs-client</artifactId>
+            <version>2.8.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-hdfs</artifactId>
+            <version>2.8.5</version>
         </dependency>
     </dependencies>
 </project>

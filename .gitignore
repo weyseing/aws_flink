@@ -1,2 +1,4 @@
 flink_libs/jars/
 flink_app_example/target/
+
+.env
