@@ -1,4 +1,5 @@
-flink_libs/jars/
-flink_app_example/target/
+flink_libs/target/
+flink_libs/dependency-reduced-pom.xml
 
+flink_app/target/
 .env

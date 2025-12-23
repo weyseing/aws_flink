@@ -1,28 +1,68 @@
 #!/bin/bash
+set -e
 
-# load env
+# Load environment variables
 if [ -f .env ]; then
     export $(grep -v '^#' .env | xargs)
-    echo "✅ .env file loaded."
 else
-    echo "❌ Error: .env file not found."
+    echo "Error: .env file not found."
     exit 1
 fi
 
-# build jars file
-cd flink_libs
-rm -rf jars
-mvn dependency:copy-dependencies -DoutputDirectory=jars
+# Configuration
+S3_BUCKET="${S3_BUCKET_FLINK_LIBS}"
+S3_LIBS_PREFIX="flink_libs"
 
-# upload to s3
-aws s3 cp jars/ s3://$S3_BUCKET_FLINK_LIBS/flink_libs/ \
-    --recursive \
-    --exclude "*" \
-    --include "flink-sql-connector-kafka-1.15.4.jar" \
-    --include "iceberg-flink-runtime-1.15-1.4.3.jar" \
-    --include "iceberg-aws-bundle-1.4.3.jar" \
-    --include "hadoop-common-2.8.5.jar" \
-    --include "hadoop-hdfs-client-2.8.5.jar" \
-    --include "hadoop-hdfs-2.8.5.jar"
+# Generate unique names
+TIMESTAMP=$(date +"%Y%m%d-%H%M%S")
+BASE_JAR_NAME="iceberg-connector-${TIMESTAMP}"
+FULL_JAR_NAME="${BASE_JAR_NAME}.jar"
+
+echo "======================================"
+echo "📚 Building Custom Libraries JAR"
+echo "======================================"
+echo "JAR Name: $FULL_JAR_NAME"
+echo "S3 Location: s3://$S3_BUCKET/$S3_LIBS_PREFIX/"
+echo "======================================"
+
+# Step 1: Build the libraries JAR
+echo ""
+echo "📦 Step 1: Building libraries JAR..."
+cd flink_libs
+
+mvn clean package -DskipTests -Djar.name="$BASE_JAR_NAME"
+
+if [ ! -f "target/$FULL_JAR_NAME" ]; then
+    echo "❌ Error: JAR file not found at target/$FULL_JAR_NAME"
+    exit 1
+fi
+
+JAR_SIZE=$(du -h "target/$FULL_JAR_NAME" | cut -f1)
+echo "✅ Libraries JAR built successfully: $FULL_JAR_NAME ($JAR_SIZE)"
+
+# Step 2: Upload to S3
+echo ""
+echo "☁️  Step 2: Uploading libraries JAR to S3..."
+aws s3 cp "target/$FULL_JAR_NAME" "s3://$S3_BUCKET/$S3_LIBS_PREFIX/$FULL_JAR_NAME"
+
+if [ $? -ne 0 ]; then
+    echo "❌ Failed to upload JAR to S3"
+    cd ..
+    exit 1
+fi
+echo "✅ JAR uploaded successfully"
+
+
+# Save the JAR name to a file for the app deployment script to use
+echo "$S3_LIBS_PREFIX/$FULL_JAR_NAME" > target/last_libs_jar
 
 cd ..
+echo ""
+echo "======================================"
+echo "✨ Libraries JAR Deployment Complete!"
+echo "======================================"
+echo "JAR: s3://$S3_BUCKET/$S3_LIBS_PREFIX/$FULL_JAR_NAME"
+echo "======================================"
+echo ""
+echo "💡 Next step: Run ./build-and-deploy-app.sh to deploy your application"
+echo "======================================"
