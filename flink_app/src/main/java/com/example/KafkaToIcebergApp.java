@@ -65,16 +65,18 @@ public class KafkaToIcebergApp {
         
         // Step 2: Create Iceberg catalog
         LOG.info("Creating Iceberg catalog...");
-        String createCatalogSQL = String.format(
+        tableEnv.executeSql(
             "CREATE CATALOG glue_catalog WITH (" +
-            "  'type' = 'iceberg'," +
-            "  'catalog-type' = 'glue'," + 
-            "  'warehouse' = '%s'," +
-            "  'io-impl' = 'org.apache.iceberg.aws.s3.S3FileIO'" +
-            ")",
-            s3Warehouse
+            "  'type'='iceberg'," +
+            // Forces the Glue Catalog specifically
+            "  'catalog-impl'='org.apache.iceberg.aws.glue.GlueCatalog'," + 
+            // Uses S3 native client instead of Hadoop's S3A
+            "  'io-impl'='org.apache.iceberg.aws.s3.S3FileIO'," +           
+            "  'warehouse'='" + s3Warehouse + "'," +
+            // This tells Iceberg to use an empty Hadoop config instead of crashing
+            "  'hadoop.conf.common.configuration.factory'='org.apache.iceberg.aws.EmptyConfigurationFactory'" +
+            ")"
         );
-        tableEnv.executeSql(createCatalogSQL);
         LOG.info("✓ Iceberg catalog created");
         
 

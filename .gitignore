@@ -2,4 +2,6 @@ flink_libs/target/
 flink_libs/dependency-reduced-pom.xml
 
 flink_app/target/
+flink_app/dependency-reduced-pom.xml
+
 .env
